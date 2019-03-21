@@ -22,55 +22,95 @@ namespace DateTest
             TestCulture(dateNow);
             TestThreadCulture(dateNow);
             TestToString();
+            TestConvert();
 
             Console.ReadLine();
+        }
+
+        private static void TestConvert()
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("es-ES");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("----------TEST CONVERT-----------------");
+            string valueToConvert = "24/12/2020 23:50";
+            Console.WriteLine($"(1) Change Current Culture to { Thread.CurrentThread.CurrentCulture.Name }");
+            Console.WriteLine($"(1) Try to convert { valueToConvert } using { Thread.CurrentThread.CurrentCulture.Name } culture - Default Culture Format [dd/MM/yyyy]...");
+            var parseValue =  Convert.ToDateTime(valueToConvert);
+            Console.WriteLine("-->Success!");
+            Console.WriteLine();
+
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+
+            try
+            {
+                Console.WriteLine($"(2) Change Current Culture to { Thread.CurrentThread.CurrentCulture.Name }");
+                Console.WriteLine($"(2) Try to convert { valueToConvert } using { Thread.CurrentThread.CurrentCulture.Name } culture - Default Culture Format  [MM/dd/yyyy]...");
+                parseValue = Convert.ToDateTime(valueToConvert);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"-->Failed! Convert { ex.Message }");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine($"(3) Current Culture { Thread.CurrentThread.CurrentCulture.Name }");
+            parseValue = Convert.ToDateTime(valueToConvert, CultureInfo.CreateSpecificCulture("es-ES"));
+            Console.WriteLine($"(3) Try to convert { valueToConvert } using a SPECIFIC CULTURE es-ES - Default Culture Format  [dd/MM/yyyy]...");
+
+            Console.WriteLine("-->Success!");
+            Console.WriteLine();
         }
 
         private static void TestToString()
         {
             Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("----------TEST TO STRING-----------------");
             string value = "20/11/2019 22:09";
             DateTime result;
 
             //Success
-            Console.WriteLine($"Try to parse { value } to { Thread.CurrentThread.CurrentCulture.Name } culture...");
+            Console.WriteLine($"(1) - Try to parse { value } to { Thread.CurrentThread.CurrentCulture.Name } culture...");
             if (!DateTime.TryParse(value, out result))
                 Console.WriteLine($"Parse Error to { Thread.CurrentThread.CurrentCulture.Name } culture!");
             else
                 Console.WriteLine("Success!");
+            Console.WriteLine();
 
             //Failed!
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-            Console.WriteLine($"Try to parse { value } to { Thread.CurrentThread.CurrentCulture.Name } culture...");
+            Console.WriteLine($"(2) - Try to parse { value } to { Thread.CurrentThread.CurrentCulture.Name } culture...");
 
             if (!DateTime.TryParse(value, out result))
                 Console.WriteLine($"Parse Error to { Thread.CurrentThread.CurrentCulture.Name } culture!");
             else
                 Console.WriteLine("Success!");
+            Console.WriteLine();
 
             //Failed!
-            Console.WriteLine($"Try to parse Exact { value } - Format: dd/MM/yyyy HH:mm:ss...");
+            Console.WriteLine($"(3) - Try to parse Exact { value } - Format: dd/MM/yyyy HH:mm:ss...");
             if (!DateTime.TryParseExact(value, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out result))
                 Console.WriteLine($"Try Parse Exact Error - Format: dd/MM/yyyy HH:mm:ss");
             else
                 Console.WriteLine("Success!");
+            Console.WriteLine();
 
             //Success!
-            Console.WriteLine($"Try to parse Exact { value } - Format: dd/MM/yyyy HH:mm...");
+            Console.WriteLine($"(4) - Try to parse Exact { value } - Format: dd/MM/yyyy HH:mm...");
             if (!DateTime.TryParseExact(value, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out result))
                 Console.WriteLine($"Try Parse Exact Error - Format: dd/MM/yyyy HH:mm");
             else
                 Console.WriteLine("Success!");
+            Console.WriteLine();
 
             //Success!
-            Console.WriteLine($"Try to parse Exact { value } - Many formats...");
+            Console.WriteLine($"(5) - Try to parse Exact { value } - Many formats...");
             string[] format = new string[] { "yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm", "dd/MM/yyyy HH:mm:ss", "MM/dd/yyyy HH:mm", "dd/MM/yyyy", "MM/dd/yyyy" };
 
             if (!DateTime.TryParseExact(value, format, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out result))
                 Console.WriteLine($"Try Parse Exact Error to { Thread.CurrentThread.CurrentCulture.Name } culture!");
             else
                 Console.WriteLine("Success!");
-
+            Console.WriteLine();
         }
 
         private static void TestThreadCulture(DateTime dateNow)
@@ -79,6 +119,7 @@ namespace DateTest
             //CurrentCulture - Culture: encargada de traducir formatos de fechas, monedas, etc : Los dejamos en español Argentina
             //CurrentUICulture - UiCulture: Encarga de traducir nombres, dataAnnotations etc : Dejamos que se seteen en runtime segun preferencia del usuario
             Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine("----------TEST THREAD CULTURE-----------------");
             Console.WriteLine($"Current Culture: { Thread.CurrentThread.CurrentCulture.Name }");
             Console.WriteLine($"Date Now - : { dateNow.ToString() }");
 
