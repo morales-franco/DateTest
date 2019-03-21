@@ -4,3 +4,7 @@
 ##### Topics
 1. Date.Now, Where does the framework take this date ? 
 2. Datetime & cultures
+3. Current Thread Culture
+4. Convert.ToDatetime()
+5. DateTime.TryParse()
+6. Datatime To String
