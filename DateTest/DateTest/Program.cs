@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -20,8 +21,56 @@ namespace DateTest
             TestDateNow(dateNow);
             TestCulture(dateNow);
             TestThreadCulture(dateNow);
+            TestToString();
 
             Console.ReadLine();
+        }
+
+        private static void TestToString()
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            string value = "20/11/2019 22:09";
+            DateTime result;
+
+            //Success
+            Console.WriteLine($"Try to parse { value } to { Thread.CurrentThread.CurrentCulture.Name } culture...");
+            if (!DateTime.TryParse(value, out result))
+                Console.WriteLine($"Parse Error to { Thread.CurrentThread.CurrentCulture.Name } culture!");
+            else
+                Console.WriteLine("Success!");
+
+            //Failed!
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            Console.WriteLine($"Try to parse { value } to { Thread.CurrentThread.CurrentCulture.Name } culture...");
+
+            if (!DateTime.TryParse(value, out result))
+                Console.WriteLine($"Parse Error to { Thread.CurrentThread.CurrentCulture.Name } culture!");
+            else
+                Console.WriteLine("Success!");
+
+            //Failed!
+            Console.WriteLine($"Try to parse Exact { value } - Format: dd/MM/yyyy HH:mm:ss...");
+            if (!DateTime.TryParseExact(value, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out result))
+                Console.WriteLine($"Try Parse Exact Error - Format: dd/MM/yyyy HH:mm:ss");
+            else
+                Console.WriteLine("Success!");
+
+            //Success!
+            Console.WriteLine($"Try to parse Exact { value } - Format: dd/MM/yyyy HH:mm...");
+            if (!DateTime.TryParseExact(value, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out result))
+                Console.WriteLine($"Try Parse Exact Error - Format: dd/MM/yyyy HH:mm");
+            else
+                Console.WriteLine("Success!");
+
+            //Success!
+            Console.WriteLine($"Try to parse Exact { value } - Many formats...");
+            string[] format = new string[] { "yyyy-MM-dd HH:mm:ss", "dd/MM/yyyy HH:mm", "dd/MM/yyyy HH:mm:ss", "MM/dd/yyyy HH:mm", "dd/MM/yyyy", "MM/dd/yyyy" };
+
+            if (!DateTime.TryParseExact(value, format, CultureInfo.InvariantCulture, DateTimeStyles.NoCurrentDateDefault, out result))
+                Console.WriteLine($"Try Parse Exact Error to { Thread.CurrentThread.CurrentCulture.Name } culture!");
+            else
+                Console.WriteLine("Success!");
+
         }
 
         private static void TestThreadCulture(DateTime dateNow)
@@ -29,10 +78,17 @@ namespace DateTest
 
             //CurrentCulture - Culture: encargada de traducir formatos de fechas, monedas, etc : Los dejamos en español Argentina
             //CurrentUICulture - UiCulture: Encarga de traducir nombres, dataAnnotations etc : Dejamos que se seteen en runtime segun preferencia del usuario
-            var currentCultureName = Thread.CurrentThread.CurrentCulture.Name;
-            //Cambia al cambiar el formato original desde windows
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            Console.WriteLine($"Current Culture: { Thread.CurrentThread.CurrentCulture.Name }");
+            Console.WriteLine($"Date Now - : { dateNow.ToString() }");
 
+            //Change current culture to en-US
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
+            Console.WriteLine($"Current Culture: { Thread.CurrentThread.CurrentCulture.Name }");
+            Console.WriteLine($"Date Now - : { dateNow.ToString() }");
 
+            //Change for the original culture
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("es-ES");
         }
 
         private static void TestCulture(DateTime dateNow)
