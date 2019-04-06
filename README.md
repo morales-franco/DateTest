@@ -8,3 +8,8 @@
 4. Convert.ToDatetime()
 5. DateTime.TryParse()
 6. Datatime To String
+
+#### Time Zones
+1. UTC
+2. UTC & OFFSET & LOCAL TIME
+3. TIME ZONES
