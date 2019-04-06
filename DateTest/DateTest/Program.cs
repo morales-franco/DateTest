@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DateTest.Testers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -23,11 +24,18 @@ namespace DateTest
             TestThreadCulture(dateNow);
             TestToString();
 
+            UtcTester utcTester = new UtcTester();
+            utcTester.InitTest();
+
             Console.ReadLine();
         }
 
         private static void TestToString()
         {
+            //When we recive a datetime in string format, we'd try convert this string to Datetime Value.
+            //In this point is important know the culture because if we try to convert the string value using 
+            //a wrong culture, the covnert method will throw a exception.
+
             Console.ForegroundColor = ConsoleColor.Yellow;
             string value = "20/11/2019 22:09";
             DateTime result;
@@ -71,13 +79,17 @@ namespace DateTest
             else
                 Console.WriteLine("Success!");
 
+            //Change for the original culture
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("es-ES");
         }
 
         private static void TestThreadCulture(DateTime dateNow)
         {
-
             //CurrentCulture - Culture: encargada de traducir formatos de fechas, monedas, etc : Los dejamos en español Argentina
             //CurrentUICulture - UiCulture: Encarga de traducir nombres, dataAnnotations etc : Dejamos que se seteen en runtime segun preferencia del usuario
+
+            //ToString() use the CurrentCulture Thread for cast Datetime to string.
+            //If we change the CurrentCulture Thread value, ToString() will use this new value.
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine($"Current Culture: { Thread.CurrentThread.CurrentCulture.Name }");
             Console.WriteLine($"Date Now - : { dateNow.ToString() }");
@@ -93,6 +105,7 @@ namespace DateTest
 
         private static void TestCulture(DateTime dateNow)
         {
+            //Transform current datetime to others culture formats
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("----------TEST CULTURE-----------------");
             Console.WriteLine($"Date Now - Default Format - Culture France [fr-FR]   : {dateNow.ToString(CultureInfo.CreateSpecificCulture("fr-FR"))}");
@@ -103,6 +116,9 @@ namespace DateTest
 
         private static void TestDateNow(DateTime dateNow)
         {
+            //Retrive Datetime from SO or Server
+            //Using default culture 
+            //If we change SO datetime, Datetime noew will return the new value
             Console.ForegroundColor = ConsoleColor.Magenta;
             Console.WriteLine("----------TEST DATE NOW-----------------");
             Console.WriteLine($"Date Now (Datetime Operation System - Default): { dateNow.ToString("dd/MM/yyyy HH:mm:ss") }");
